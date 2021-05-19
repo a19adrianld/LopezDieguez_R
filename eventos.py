@@ -1,3 +1,5 @@
+import sys
+
 from ventana import *
 import var, conexion
 
@@ -24,6 +26,9 @@ class Eventos():
                 var.newfurgo.append(i.text())
             conexion.Conexion.altaFurgo(var.newfurgo)
             conexion.Conexion.listarFurgo(self)
+
+            conexion.Conexion.cargarCmbM(var.ui.cmbMat)
+
         except Exception as error:
             print('Error carga furgo: %s: ' % str(error))
 
@@ -45,6 +50,9 @@ class Eventos():
             matricula = var.ui.txtMatricula.text()
             conexion.Conexion.deleteFurgo(matricula)
             conexion.Conexion.listarFurgo(self)
+
+            conexion.Conexion.cargarCmbM(var.ui.cmbMat)
+
         except Exception as error:
             print('Error baja furgo: %s: ' % str(error))
 
@@ -56,6 +64,9 @@ class Eventos():
                 furgomodif.append(i.text())
             conexion.Conexion.modifFurgo(furgomodif)
             conexion.Conexion.listarFurgo(self)
+
+            conexion.Conexion.cargarCmbM(var.ui.cmbMat)
+
         except Exception as error:
             print('Error modificar furgo: %s: ' % str(error))
 
@@ -85,12 +96,16 @@ class Eventos():
             if Eventos.validoDni():
                 conexion.Conexion.nuevoCon(var.newcon)
                 conexion.Conexion.listarCon(self)
+
+                conexion.Conexion.cargarCmbC(var.ui.cmbCon)
+
             else:
                 QtWidgets.QMessageBox.critical(None, 'Datos no válidos.',
                                                   'Comprueba DNI')
 
         except Exception as error:
             print('Error carga furgo: %s: ' % str(error))
+
 
 
     def datosUnCon(self):
@@ -114,6 +129,9 @@ class Eventos():
             dni = var.ui.txtDni.text()
             conexion.Conexion.deleteCon(dni)
             conexion.Conexion.listarCon(self) #actualizar la tabla
+
+            conexion.Conexion.cargarCmbC(var.ui.cmbCon)
+
         except Exception as error:
             print('Error baja conductor: %s: ' % str(error))
 
@@ -145,6 +163,9 @@ class Eventos():
                 conmodif.append(i.text())
             conexion.Conexion.modifCon(conmodif)
             conexion.Conexion.listarCon(self)
+
+            conexion.Conexion.cargarCmbC(var.ui.cmbCon)
+
         except Exception as error:
             print('Error modificar conductor: %s: ' % str(error))
             
@@ -191,3 +212,107 @@ class Eventos():
         except Exception as error:
             print('Error módulo validar DNI %s' % str(error))
             return None
+
+
+    #GESTION RUTAS
+
+    def abrirCalendar(self):
+        try:
+            var.dlgCalendar.show()
+
+        except Exception as error:
+            print('Error abrir calendario' % str(error))
+            return None
+
+
+    def cargaFecha(qDate):
+        try:
+            data = ('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
+            var.ui.txtFecha.setText(str(data))
+            var.dlgCalendar.hide()
+
+        except Exception as error:
+            print('Error abrir calendario' % str(error))
+            return None
+
+
+    def calculaDistancia():
+        try:
+            inicio = int(var.ui.txtKmi.text())
+            final = int(var.ui.txtKmf.text())
+            if final <= inicio:
+                var.ui.lblKmtotal.setStyleSheet('QLabel {color:red;}')
+                var.ui.lblKmtotal.setText('Comprueba los km')
+            else:
+                var.ui.lblKmtotal.setStyleSheet('QLabel {color:red;}')
+                var.ui.lblKmtotal.setText(str(final-inicio))
+        except Exception as error:
+            print('Error calcular distancia' % str(error))
+            return None
+
+
+    def calculaTarifa(self):
+        try:
+            coste = [] #no hace falta
+            coste = conexion.Conexion.cargarTarifas(self) #aquí le pasamos el array de floats que cogimos de conexion cargarTarifas
+            kmTot = int(var.ui.lblKmtotal.text())
+            print(coste)
+            if var.ui.rbtLocal.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot)* coste[0]))) #ese coste[0] es el primer valor del array
+            if var.ui.rbtProvincial.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot)* coste[1])))
+            if var.ui.rbtRegional.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot) * coste[2])))
+            if var.ui.rbtNacional.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot)* coste[3])))
+
+        except Exception as error:
+            print('Error calcular tarifa ' % str(error))
+
+
+    '''eventos tab rutas'''
+    def altaRuta(self):
+        try:
+            var.newruta = []
+            coste = conexion.Conexion.cargarTarifas(self)
+            mitarifa = 0.00
+            if var.ui.rbtLocal.isChecked():
+                mitarifa = coste[0] #ese coste[0] es el primer valor del array
+            if var.ui.rbtProvincial.isChecked():
+                mitarifa = coste[1]
+            if var.ui.rbtRegional.isChecked():
+                mitarifa = coste[2]
+            if var.ui.rbtNacional.isChecked():
+                mitarifa = coste[3]
+
+            # ruta = [var.ui.txtFecha, var.ui.cmbMat.currentData(var.ui.cmbMat.currentIndex()), var.ui.cmbCon.currentData(var.ui.cmbCon.currentIndex()), var.ui.txtKmi, var.ui.txtKmf, var.ui.lblKmtotal, var.ui.lblPrecio, mitarifa]
+            # for i in ruta:
+            #     var.newruta.append(i.text())
+
+            ruta = [var.ui.txtFecha.text(), var.ui.cmbMat.currentText(), var.ui.cmbCon.currentText(), var.ui.txtKmi.text(), var.ui.txtKmf.text(), var.ui.lblKmtotal.text(), str(mitarifa), var.ui.lblPrecio.text()]
+            for i in ruta:
+                var.newruta.append(i)
+
+            conexion.Conexion.altaRuta(var.newruta)
+            conexion.Conexion.listarRuta(self)
+
+        except Exception as error:
+            print('Error carga ruta: %s: ' % str(error))
+
+
+    '''
+    eventos generales
+    '''
+    def Salir(self):
+        try:
+            ret = QtWidgets.QMessageBox.question(None, 'Salir',
+                                           '¿Desea Salir del Programa?')
+            if ret == QtWidgets.QMessageBox.Yes:
+                sys.exit()
+            else:
+                QtWidgets.QMessageBox.hide
+
+
+        except Exception as error:
+            print('Error salir manu ' % str(error))
+
