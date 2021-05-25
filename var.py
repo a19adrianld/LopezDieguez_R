@@ -10,3 +10,4 @@ otras variables
 newfurgo = []
 newcon = []
 tarifas = []
+tarifas = []

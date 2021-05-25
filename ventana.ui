@@ -391,16 +391,6 @@
           </column>
           <column>
            <property name="text">
-            <string>Km Inicial</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Km Final</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
             <string>Km Total</string>
            </property>
           </column>
@@ -411,7 +401,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Precio Total</string>
+            <string>Total</string>
            </property>
           </column>
          </widget>

@@ -93,6 +93,8 @@ class Main(QtWidgets.QMainWindow):
         var.ui.tabFurgo.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         var.ui.tabConductor.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
+        var.ui.tabRutas.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
+        var.ui.tabRutas.clicked.connect(eventos.Eventos.datosUnaRuta)
 
         '''
         eventos tarifas

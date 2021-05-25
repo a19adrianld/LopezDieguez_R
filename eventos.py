@@ -198,6 +198,96 @@ class Eventos():
             return None
 
 
+    #GESTION RUTAS
+
+    def abrirCalendar(self):
+        try:
+            var.dlgCalendar.show()
+
+        except Exception as error:
+            print('Error abrir calendario' % str(error))
+            return None
+
+
+    def cargaFecha(qDate):
+        try:
+            data = ('{0}/{1}/{2}'.format(qDate.day(), qDate.month(), qDate.year()))
+            var.ui.txtFecha.setText(str(data))
+            var.dlgCalendar.hide()
+
+        except Exception as error:
+            print('Error abrir calendario' % str(error))
+            return None
+
+
+    def calculaDistancia():
+        try:
+            inicio = int(var.ui.txtKmi.text())
+            final = int(var.ui.txtKmf.text())
+            if final <= inicio:
+                var.ui.lblKmtotal.setStyleSheet('QLabel {color:red;}')
+                var.ui.lblKmtotal.setText('Comprueba los km')
+            else:
+                var.ui.lblKmtotal.setStyleSheet('QLabel {color:red;}')
+                var.ui.lblKmtotal.setText(str(final-inicio))
+        except Exception as error:
+            print('Error calcular distancia' % str(error))
+            return None
+
+
+    def calculaTarifa(self):
+        try:
+            coste = []
+            coste = conexion.Conexion.cargarTarifas(self) #aquí le pasamos el array de floats que cogimos de conexion cargarTarifas
+            kmTot = int(var.ui.lblKmtotal.text())
+            print(coste)
+            if var.ui.rbtLocal.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot)* coste[0]) + '€')) #ese coste[0] es el primer valor del array
+            if var.ui.rbtProvincial.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot)* coste[1]) + '€'))
+            if var.ui.rbtRegional.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot) * coste[2]) + '€'))
+            if var.ui.rbtNacional.isChecked():
+                var.ui.lblPrecio.setText(str('{0:.2f}'.format(float(kmTot)* coste[3]) + '€'))
+
+        except Exception as error:
+            print('Error calcular tarifa ' % str(error))
+
+
+    '''eventos tab rutas'''
+    def altaRuta(self):
+        try:
+            var.newruta = []
+            ruta = [var.ui.lblRuta, var.ui.txtFecha, var.ui.cmbMat, var.ui.cmbCon, var.ui.txtKmi, var.ui.txtKmf, var.ui.kmTot] #TODO CODE
+            for i in furgo:
+                var.newfurgo.append(i.text())
+            conexion.Conexion.altaFurgo(var.newfurgo)
+            conexion.Conexion.listarFurgo(self)
+
+            conexion.Conexion.cargarCmbM(var.ui.cmbMat)
+
+        except Exception as error:
+            print('Error carga furgo: %s: ' % str(error))
+
+
+    '''
+    eventos generales
+    '''
+    def Salir(self):
+        try:
+            ret = QtWidgets.QMessageBox.question(None, 'Salir',
+                                           '¿Desea Salir del Programa?')
+            if ret == QtWidgets.QMessageBox.Yes:
+                sys.exit()
+            else:
+                QtWidgets.QMessageBox.hide
+
+
+        except Exception as error:
+            print('Error salir manu ' % str(error))
+
+
+
     def validarDni():
         try:
             if Eventos.validoDni():
@@ -289,7 +379,7 @@ class Eventos():
             # for i in ruta:
             #     var.newruta.append(i.text())
 
-            ruta = [var.ui.txtFecha.text(), var.ui.cmbMat.currentText(), var.ui.cmbCon.currentText(), var.ui.txtKmi.text(), var.ui.txtKmf.text(), var.ui.lblKmtotal.text(), str(mitarifa), var.ui.lblPrecio.text()]
+            ruta = [var.ui.txtFecha.text(), var.ui.cmbMat.currentText(), var.ui.cmbCon.currentText(), var.ui.txtKmi.text(), var.ui.txtKmf.text(),  mitarifa]
             for i in ruta:
                 var.newruta.append(i)
 
@@ -299,6 +389,18 @@ class Eventos():
         except Exception as error:
             print('Error carga ruta: %s: ' % str(error))
 
+
+    def datosUnaRuta(self):
+        try:
+            fila = var.ui.tabRutas.selectedItems()
+            ruta = [var.ui.txtFecha.text(), var.ui.cmbMat.currentText(), var.ui.cmbCon.currentText(), var.ui.txtKmi.text(), var.ui.txtKmf.text(),  mitarifa]
+            if fila:
+                fila = [dato.text() for dato in fila]
+                #carga los datos de la tabla en una lista furgo
+                for i, dato in enumerate(furgo):
+                    dato.setText(fila[i])
+        except Exception as error:
+            print('Error datos furgo: €s: ' % str(error))
 
     '''
     eventos generales
