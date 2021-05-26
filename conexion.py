@@ -336,7 +336,17 @@ class Conexion():
                                           'Haga click para continuar')
 
 
+    def deleteRuta(numruta):
+        query = QtSql.QSqlQuery()
+        query.prepare('delete from rutas where codigo = :numruta')
+        query.bindValue(':numruta', int(numruta))
+        if query.exec_():
+            QtWidgets.QMessageBox.information(None, 'Ruta Eliminada',
+                                              'Haga click para continuar')
 
+        else:
+            QtWidgets.QMessageBox.warning(None, query.lastError().text(),
+                                          'Haga click para continuar')
 
 
 

@@ -393,14 +393,30 @@ class Eventos():
     def datosUnaRuta(self):
         try:
             fila = var.ui.tabRutas.selectedItems()
-            ruta = [var.ui.txtFecha.text(), var.ui.cmbMat.currentText(), var.ui.cmbCon.currentText(), var.ui.txtKmi.text(), var.ui.txtKmf.text(),  mitarifa]
             if fila:
                 fila = [dato.text() for dato in fila]
                 #carga los datos de la tabla en una lista furgo
-                for i, dato in enumerate(furgo):
-                    dato.setText(fila[i])
+            var.ui.lblRuta.setText(str(fila[0]))
+            var.ui.txtFecha.setText(str(fila[1]))
+            var.ui.cmbMat.setCurrentText(str(fila[2]))
+            var.ui.cmbCon.setCurrentText(str(fila[3]))
+            var.ui.lblKmtotal.setText(str(fila[4]))
+            var.ui.lblPrecio.setText(str(fila[6]))
+
         except Exception as error:
             print('Error datos furgo: €s: ' % str(error))
+
+
+    def bajaRuta(self):
+        try:
+            numruta = int(var.ui.lblRuta.text())
+            conexion.Conexion.deleteRuta(numruta)
+            conexion.Conexion.listarRuta(self)
+
+
+        except Exception as error:
+            print('Error baja ruta: %s: ' % str(error))
+
 
     '''
     eventos generales

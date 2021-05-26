@@ -69,6 +69,7 @@ class Main(QtWidgets.QMainWindow):
         var.ui.btnCalendar.clicked.connect(eventos.Eventos.abrirCalendar)
 
         var.ui.btnAltaruta.clicked.connect(eventos.Eventos.altaRuta)
+        var.ui.btnBajaruta.clicked.connect(eventos.Eventos.bajaRuta)
 
         '''
         eventos cajas texto
