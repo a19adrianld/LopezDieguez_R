@@ -2,7 +2,7 @@ from ventana import *
 from calendar import *
 from tarifas import *
 from datetime import datetime
-import sys, conexion, var, eventos, rutas
+import sys, conexion, var, eventos, rutas, informes
 import locale
 
 
@@ -67,9 +67,13 @@ class Main(QtWidgets.QMainWindow):
         var.ui.btnModifcon.clicked.connect(eventos.Eventos.modifCon)
         var.ui.btnReloadcon.clicked.connect(eventos.Eventos.limpiaCon)
         var.ui.btnCalendar.clicked.connect(eventos.Eventos.abrirCalendar)
+        var.ui.btnReloadruta.clicked.connect(eventos.Eventos.limpiaRuta)
+        var.ui.btnModifruta.clicked.connect(eventos.Eventos.modifRuta)
 
         var.ui.btnAltaruta.clicked.connect(eventos.Eventos.altaRuta)
         var.ui.btnBajaruta.clicked.connect(eventos.Eventos.bajaRuta)
+
+        var.ui.btnSalir.clicked.connect(eventos.Eventos.Salir)
 
         '''
         eventos cajas texto
@@ -107,6 +111,7 @@ class Main(QtWidgets.QMainWindow):
         '''
         var.ui.menuBarSalir.triggered.connect(eventos.Eventos.Salir)
         var.ui.menuBarTarifas.triggered.connect(rutas.Rutas.mostrarTarifas) #podria ser eventos.Eventos, lo importamos arriba
+        var.ui.reportRutas.triggered.connect(informes.Informes.informeRutas)
 
 
 # Press the green button in the gutter to run the script.

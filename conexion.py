@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtSql
+from PyQt5 import QtWidgets, QtSql, QtCore
 
 import var
 
@@ -330,10 +330,39 @@ class Conexion():
                 var.ui.tabRutas.setItem(index, 4, QtWidgets.QTableWidgetItem(str(query.value(5)-query.value(4))))
                 var.ui.tabRutas.setItem(index, 5, QtWidgets.QTableWidgetItem(str(query.value(6))))
                 var.ui.tabRutas.setItem(index, 6, QtWidgets.QTableWidgetItem(str(query.value(6)*(query.value(5)-query.value(4)))))
+
+                var.ui.tabRutas.item(index, 0).setTextAlignment(QtCore.Qt.AlignCenter)
+                var.ui.tabRutas.item(index, 1).setTextAlignment(QtCore.Qt.AlignCenter)
+                var.ui.tabRutas.item(index, 4).setTextAlignment(QtCore.Qt.AlignCenter)
+                var.ui.tabRutas.item(index, 5).setTextAlignment(QtCore.Qt.AlignRight)
+                var.ui.tabRutas.item(index, 6).setTextAlignment(QtCore.Qt.AlignRight)
                 index += 1
         else:
             QtWidgets.QMessageBox.warning(None, query.lastError().text(),
                                           'Haga click para continuar')
+
+    def listarUnaRuta(idruta):
+        query = QtSql.QSqlQuery()
+        query.prepare('select * from rutas where codigo = :idruta')
+        query.bindValue(':idruta', idruta)
+        try:
+            if query.exec_():
+                query.next()
+                var.ui.lblRuta.setText(str(query.value(0)))
+                var.ui.txtFecha.setText(str(query.value(1)))
+                var.ui.cmbMat.setCurrentText(str(query.value(2)))
+                var.ui.cmbCon.setCurrentText(str(query.value(3)))
+                var.ui.txtKmi.setText(str(query.value(4)))
+                var.ui.txtKmf.setText(str(query.value(5)))
+                var.ui.lblKmtotal.setText(str(query.value(5)-query.value(4)))
+                var.ui.lblPrecio.setText(str(query.value(6)*(query.value(5)-query.value(4))))
+
+
+            else:
+                QtWidgets.QMessageBox.warning(None, query.lastError().text(),
+                                              'Haga click para continuar')
+        except Exception as error:
+            print('Error actualizar tarifas: %s: ' % str(error))
 
 
     def deleteRuta(numruta):
@@ -349,6 +378,25 @@ class Conexion():
                                           'Haga click para continuar')
 
 
+
+    def modifRuta(rutamodif):
+        query = QtSql.QSqlQuery()
+        query.prepare('update rutas set fecha=:fecha, matricula=:matricula, conductor=:conductor,  kmini=:kmini, kmfin=:kmfin, tarifa=:tarifa '
+                      'where codigo=:codigo')
+        query.bindValue(':codigo', int(rutamodif[0]))
+        query.bindValue(':fecha', str(rutamodif[1]))
+        query.bindValue(':matricula', str(rutamodif[2]))
+        query.bindValue(':conductor', str(rutamodif[3]))
+        query.bindValue(':kmini', int(rutamodif[4]))
+        query.bindValue(':kmfin', int(rutamodif[5]))
+        query.bindValue(':tarifa', float(rutamodif[6]))
+
+        if query.exec_():
+            QtWidgets.QMessageBox.information(None, 'Ruta Modificada',
+                                          'Haga click para continuar')
+        else:
+            QtWidgets.QMessageBox.warning(None, query.lastError().text(),
+                                          'Recuerde que no puede modificar el codigo de ruta. Haga click para continuar')
 
 
 

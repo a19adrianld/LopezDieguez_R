@@ -270,21 +270,22 @@ class Eventos():
             print('Error carga furgo: %s: ' % str(error))
 
 
-    '''
-    eventos generales
-    '''
-    def Salir(self):
-        try:
-            ret = QtWidgets.QMessageBox.question(None, 'Salir',
-                                           '¿Desea Salir del Programa?')
-            if ret == QtWidgets.QMessageBox.Yes:
-                sys.exit()
-            else:
-                QtWidgets.QMessageBox.hide
+    # '''ESTO ESTABA REPETIDO
 
-
-        except Exception as error:
-            print('Error salir manu ' % str(error))
+    # eventos generales
+    # '''
+    # def Salir(self):
+    #     try:
+    #         ret = QtWidgets.QMessageBox.question(None, 'Salir',
+    #                                        '¿Desea Salir del Programa?')
+    #         if ret == QtWidgets.QMessageBox.Yes:
+    #             sys.exit()
+    #         else:
+    #             QtWidgets.QMessageBox.hide
+    #
+    #
+    #     except Exception as error:
+    #         print('Error salir manu ' % str(error))
 
 
 
@@ -390,18 +391,31 @@ class Eventos():
             print('Error carga ruta: %s: ' % str(error))
 
 
+    # def datosUnaRuta(self):
+    #     try:
+    #         fila = var.ui.tabRutas.selectedItems()
+    #         if fila:
+    #             fila = [dato.text() for dato in fila]
+    #             #carga los datos de la tabla en una lista furgo
+    #         var.ui.lblRuta.setText(str(fila[0]))
+    #         var.ui.txtFecha.setText(str(fila[1]))
+    #         var.ui.cmbMat.setCurrentText(str(fila[2]))
+    #         var.ui.cmbCon.setCurrentText(str(fila[3]))
+    #         var.ui.lblKmtotal.setText(str(fila[4]))
+    #         var.ui.lblPrecio.setText(str(fila[6]))
+    #
+    #     except Exception as error:
+    #         print('Error datos furgo: €s: ' % str(error))
+
     def datosUnaRuta(self):
         try:
             fila = var.ui.tabRutas.selectedItems()
             if fila:
                 fila = [dato.text() for dato in fila]
                 #carga los datos de la tabla en una lista furgo
-            var.ui.lblRuta.setText(str(fila[0]))
-            var.ui.txtFecha.setText(str(fila[1]))
-            var.ui.cmbMat.setCurrentText(str(fila[2]))
-            var.ui.cmbCon.setCurrentText(str(fila[3]))
-            var.ui.lblKmtotal.setText(str(fila[4]))
-            var.ui.lblPrecio.setText(str(fila[6]))
+
+            conexion.Conexion.listarUnaRuta(int(fila[0]))
+
 
         except Exception as error:
             print('Error datos furgo: €s: ' % str(error))
@@ -416,6 +430,44 @@ class Eventos():
 
         except Exception as error:
             print('Error baja ruta: %s: ' % str(error))
+
+    def limpiaRuta(self):
+        try:
+            ruta = [var.ui.lblRuta, var.ui.txtFecha, var.ui.txtKmi, var.ui.txtKmf, var.ui.lblKmtotal, var.ui.lblPrecio]
+            for i in range(len(ruta)):
+                ruta[i].setText('')
+            var.ui.cmbMat.setCurrentIndex(0)
+            var.ui.cmbCon.setCurrentIndex(0)
+
+        except Exception as error:
+            print('Error limpiar furgoneta: %s: ' % str(error))
+
+
+    def modifRuta(self):
+        try:
+            coste = conexion.Conexion.cargarTarifas(self)
+            mitarifa = 0.00
+            if var.ui.rbtLocal.isChecked():
+                mitarifa = coste[0] #ese coste[0] es el primer valor del array
+            if var.ui.rbtProvincial.isChecked():
+                mitarifa = coste[1]
+            if var.ui.rbtRegional.isChecked():
+                mitarifa = coste[2]
+            if var.ui.rbtNacional.isChecked():
+                mitarifa = coste[3]
+
+            ruta = [var.ui.lblRuta.text(), var.ui.txtFecha.text(), var.ui.cmbMat.currentText(), var.ui.cmbCon.currentText(), var.ui.txtKmi.text(), var.ui.txtKmf.text(),  mitarifa]
+            rutamodif = []
+            for i in ruta:
+                rutamodif.append(i)
+            print(rutamodif)
+            conexion.Conexion.modifRuta(rutamodif)
+            conexion.Conexion.listarRuta(self)
+
+
+        except Exception as error:
+            print('Error modificar furgo: %s: ' % str(error))
+
 
 
     '''
