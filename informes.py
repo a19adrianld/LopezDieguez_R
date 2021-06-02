@@ -1,6 +1,7 @@
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from PyQt5 import QtSql
+from datetime import datetime, date
 import os, var
 
 
@@ -22,7 +23,7 @@ class Informes:
     def informeRutas(self):
         try:
             var.informe = canvas.Canvas('./reportes/listadorutas.pdf', pagesize=A4)
-            Informes.cabecera(self)
+            Informes.cabecera(self) #preguntar por qué se hace sobre la clase
             Informes.pie(self)
             rootPath = '.\\reportes'
             cont = 0
@@ -37,8 +38,16 @@ class Informes:
                         var.informe.drawString(440,70, 'Página siguiente...')
                     var.informe.setFont('Helvetica', size=10)
                     var.informe.drawString(i, j, str(query.value(0)))
-                    var.informe.drawString(i + 30, j, str(query.value(1)))
-                    var.informe.drawString(i + 160, j, str(query.value(2)))
+                    var.informe.drawRightString(i + 70, j, str(query.value(1)))
+                    var.informe.drawString(i + 80, j, str(query.value(2)))
+                    var.informe.drawString(i + 150, j, str(query.value(3)))
+                    var.informe.drawRightString(i + 300, j, str(query.value(4)))
+                    var.informe.drawRightString(i + 350, j, str(query.value(5)))
+                    var.informe.drawRightString(i + 390, j, str(query.value(6)))
+                    kmt = int(query.value(5)) - int(query.value(6))
+                    tarifatotal = float(kmt) * float(query.value(6))
+                    var.informe.drawRightString(i + 460, j, str('{0:.2f}'.format(float(tarifatotal)) + ' €'))
+
                     #van el resto de los values
                     j = j-25
 
@@ -49,10 +58,18 @@ class Informes:
                 cont += 1
 
         except Exception as error:
-            print('Error cabecera informe: %s' % str(error))
+            print('Error cuerpo informe: %s' % str(error))
 
     def pie(self):
         try:
-            print('hola')
+            var.informe.line(40, 60, 525, 60)
+            dia = datetime.now().day
+            mes = datetime.now().month
+            ano = datetime.now().year
+            var.informe.setFont('Helvetica-Oblique', size=8)
+            var.informe.drawString(250, 50, var.titulo)
+            var.informe.drawString(460, 50, str(dia) + '/' + str(mes) + '/' + str(ano))
+
+
         except Exception as error:
-            print('Error cabecera informe: %s' % str(error))
+            print('Error pie informe: %s' % str(error))
