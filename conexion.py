@@ -158,93 +158,6 @@ class Conexion():
                                           'Recuerde que no puede modificar el DNI. Haga click para continuar')
 
 
-    def cargarCmbC(cmbCon):
-        cmbCon.clear()
-        cmbCon.addItem('')
-        query = QtSql.QSqlQuery()   #ayuda aquí
-        query.prepare('select nombre from conductor')
-        if query.exec_():
-            while query.next():
-                cmbCon.addItem(str(query.value(0)))
-
-
-
-    def cargarCmbM(cmbMat): #aqui cambié cmbCon por cmbMat
-        cmbMat.clear()
-        cmbMat.addItem('')
-        query = QtSql.QSqlQuery()   #ayuda aquí // ya no me hace falta jeje, son las consultas sql... query = consulta lol
-        query.prepare('select matricula from furgoneta')
-        if query.exec_():
-            while query.next():
-                cmbMat.addItem(str(query.value(0)))
-
-
-    '''
-    tarifas
-    '''
-    def cargarTarifas(self):
-        #try:
-        tar = []
-        query = QtSql.QSqlQuery()
-        query.prepare('select * from tarifas')
-        if query.exec_():
-            while query.next():
-                var.tarifas[0].setText(str(query.value(1)))
-                tar.append(query.value(1)) #esto es para llenar tar y pasarlo a eventos calculaTarifa
-                var.tarifas[1].setText(str(query.value(2)))
-                tar.append(query.value(2))
-                var.tarifas[2].setText(str(query.value(3)))
-                tar.append(query.value(3))
-                var.tarifas[3].setText(str(query.value(4)))
-                tar.append(query.value(4))
-            return tar
-        #except Exception as error:
-         #   print('Error mostrar ventana tarifas: %s' % str(error))
-
-    def actualizarTarifas(self):
-        try:
-            nuevatarifa = []
-            id = 1
-            #CARGO LAS NUEVAS TARIFAS
-            for i, dato in enumerate(var.tarifas):
-                nuevatarifa.append('{0:.2f}'.format(float(dato.text())))
-            #CARGO LAS NUEVAS TARIFAS EN LA BD
-            print(nuevatarifa)
-            query = QtSql.QSqlQuery()
-            query.prepare('update tarifas set local=:local, provincial=:provincial, regional=:regional, nacional=:nacional where id =:id')
-            query.bindValue(':id', int(id))
-            query.bindValue(':local', (nuevatarifa[0]))
-            query.bindValue(':provincial', (nuevatarifa[1]))
-            query.bindValue(':regional', (nuevatarifa[2]))
-            query.bindValue(':nacional', (nuevatarifa[3]))
-            if query.exec_():
-                QtWidgets.QMessageBox.information(None, 'Tarifas modificadas', 'Haga click para continuar')
-            else:
-                QtWidgets.QMessageBox.warning(None, query.lastError().text(), 'Recuerde que las tarifas son únicas, haga click para continuar')
-        except Exception as error:
-            print('Error actualizar tarifas: %s: ' % str(error))
-
-
-    def cargarCmbC(cmbCon):
-        cmbCon.clear()
-        cmbCon.addItem('')
-        query = QtSql.QSqlQuery()   #ayuda aquí
-        query.prepare('select nombre from conductor')
-        if query.exec_():
-            while query.next():
-                cmbCon.addItem(str(query.value(0)))
-
-
-
-    def cargarCmbM(cmbMat): #aqui cambié cmbCon por cmbMat
-        cmbMat.clear()
-        cmbMat.addItem('')
-        query = QtSql.QSqlQuery()   #ayuda aquí // ya no me hace falta jeje, son las consultas sql... query = consulta lol
-        query.prepare('select matricula from furgoneta')
-        if query.exec_():
-            while query.next():
-                cmbMat.addItem(str(query.value(0)))
-
 
     '''
     tarifas
@@ -268,6 +181,8 @@ class Conexion():
         #except Exception as error:
          #   print('Error mostrar ventana tarifas: %s' % str(error))
 
+
+
     def actualizarTarifas(self):
         try:
             nuevatarifa = []
@@ -292,6 +207,31 @@ class Conexion():
             print('Error actualizar tarifas: %s: ' % str(error))
 
 
+
+    def cargarCmbC(cmbCon):
+        cmbCon.clear()
+        cmbCon.addItem('')
+        query = QtSql.QSqlQuery()   #ayuda aquí
+        query.prepare('select nombre from conductor')
+        if query.exec_():
+            while query.next():
+                cmbCon.addItem(str(query.value(0)))
+
+
+
+    def cargarCmbM(cmbMat): #aqui cambié cmbCon por cmbMat
+        cmbMat.clear()
+        cmbMat.addItem('')
+        query = QtSql.QSqlQuery()   #ayuda aquí // ya no me hace falta jeje, son las consultas sql... query = consulta lol
+        query.prepare('select matricula from furgoneta')
+        if query.exec_():
+            while query.next():
+                cmbMat.addItem(str(query.value(0)))
+
+
+
+
+    '''rutas'''
 
     def altaRuta(nuevaruta):
         query = QtSql.QSqlQuery()
